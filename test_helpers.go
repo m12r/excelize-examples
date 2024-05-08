@@ -48,7 +48,7 @@ func ensurePath(t *testing.T, pathname string) {
 	var err error
 	_, err = os.Stat(pathname)
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(pathname, os.ModePerm)
+		err = os.MkdirAll(pathname, 0o755)
 	}
 	if err != nil {
 		t.Fatal(err)
