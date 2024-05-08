@@ -1,6 +1,6 @@
 module github.com/m12r/excelize-examples
 
-go 1.22.2
+go 1.22
 
 require (
 	github.com/iancoleman/strcase v0.3.0
