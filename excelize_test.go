@@ -58,10 +58,7 @@ func TestSharedFormula(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	f := openFileAsWriter(t, "test-shared-formula.xlsx")
-	if _, err := x.WriteTo(f, fileOpts); err != nil {
-		t.Fatal(err)
-	}
+	dumpExcelizeFile(t, x, fileOpts)
 }
 
 func TestSharedFormulaWithDuplicateRow(t *testing.T) {
@@ -112,8 +109,5 @@ func TestSharedFormulaWithDuplicateRow(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	f := openFileAsWriter(t, "test-shared-formula-with-duplicate-row.xlsx")
-	if _, err := x.WriteTo(f, fileOpts); err != nil {
-		t.Fatal(err)
-	}
+	dumpExcelizeFile(t, x, fileOpts)
 }
