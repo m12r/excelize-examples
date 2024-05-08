@@ -11,21 +11,49 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func Dump(t *testing.T, x *excelize.File, opts ...excelize.Options) {
+type DumpParams struct {
+	File    *excelize.File
+	Options excelize.Options
+}
+
+type DumpOptions struct {
+	Path       string
+	Extensions []string
+}
+
+func DefaultDumpOptions() DumpOptions {
+	extensions := make([]string, len(defaultDumpOptions.Extensions))
+	copy(extensions, defaultDumpOptions.Extensions)
+
+	return DumpOptions{
+		Path:       defaultDumpOptions.Path,
+		Extensions: extensions,
+	}
+}
+
+var defaultDumpOptions = DumpOptions{
+	Path:       "_dump",
+	Extensions: []string{".xlsx", ".zip"},
+}
+
+func Dump(t *testing.T, params *DumpParams, opts DumpOptions) {
 	t.Helper()
 
-	dumpPath := "_dump"
-	basename, _ := strings.CutPrefix(strcase.ToKebab(t.Name()), "test-")
-	fileExtensions := []string{".xlsx", ".zip"}
+	if len(opts.Extensions) == 0 {
+		t.Log("no extensions")
+		return
+	}
 
-	if err := ensurePath(dumpPath); err != nil {
+	basename, _ := strings.CutPrefix(strcase.ToKebab(t.Name()), "test-")
+
+	if err := ensurePath(opts.Path); err != nil {
 		t.Fatal(err)
 	}
 
-	writers := make([]io.Writer, 0, len(fileExtensions))
+	writers := make([]io.Writer, 0, len(opts.Extensions))
 
-	for _, extension := range fileExtensions {
-		filename := path.Join(dumpPath, basename+extension)
+	for _, extension := range opts.Extensions {
+		filename := path.Join(opts.Path, basename+extension)
 
 		f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 		if err != nil {
@@ -40,7 +68,7 @@ func Dump(t *testing.T, x *excelize.File, opts ...excelize.Options) {
 	}
 
 	w := io.MultiWriter(writers...)
-	if _, err := x.WriteTo(w, opts...); err != nil {
+	if _, err := params.File.WriteTo(w, params.Options); err != nil {
 		t.Fatal(err)
 	}
 }

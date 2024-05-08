@@ -60,7 +60,7 @@ func TestSharedFormula(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	excelizetest.Dump(t, x, fileOpts)
+	excelizetest.Dump(t, &excelizetest.DumpParams{File: x, Options: fileOpts}, excelizetest.DefaultDumpOptions())
 }
 
 func TestSharedFormulaWithDuplicateRow(t *testing.T) {
@@ -111,5 +111,5 @@ func TestSharedFormulaWithDuplicateRow(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	excelizetest.Dump(t, x, fileOpts)
+	excelizetest.Dump(t, &excelizetest.DumpParams{File: x, Options: fileOpts}, excelizetest.DefaultDumpOptions())
 }
