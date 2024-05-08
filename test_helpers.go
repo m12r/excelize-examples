@@ -1,6 +1,7 @@
 package excelize_examples
 
 import (
+	"io"
 	"os"
 	"path"
 	"strings"
@@ -16,18 +17,27 @@ func dumpExcelizeFile(t *testing.T, x *excelize.File, opts ...excelize.Options) 
 	dumpPath := "_dump"
 	ensurePath(t, dumpPath)
 
-	basename, _ := strings.CutPrefix(t.Name(), "Test")
-	filename := path.Join(dumpPath, strcase.ToKebab(basename)+".dump.xlsx")
+	basename, _ := strings.CutPrefix(strcase.ToKebab(t.Name()), "test-")
+	fileExtensions := []string{".xlsx", ".zip"}
+	writers := make([]io.Writer, 0, len(fileExtensions))
 
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
-	if err != nil {
-		t.Fatal(err)
+	for _, extension := range fileExtensions {
+		filename := path.Join(dumpPath, basename+extension)
+
+		f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		writers = append(writers, f)
+
+		t.Cleanup(func() {
+			_ = f.Close()
+		})
 	}
-	t.Cleanup(func() {
-		_ = f.Close()
-	})
 
-	if _, err := x.WriteTo(f, opts...); err != nil {
+	w := io.MultiWriter(writers...)
+	if _, err := x.WriteTo(w, opts...); err != nil {
 		t.Fatal(err)
 	}
 }
