@@ -1,4 +1,4 @@
-package excelize_examples
+package excelizetest
 
 import (
 	"io"
@@ -11,14 +11,17 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func dumpExcelizeFile(t *testing.T, x *excelize.File, opts ...excelize.Options) {
+func Dump(t *testing.T, x *excelize.File, opts ...excelize.Options) {
 	t.Helper()
 
 	dumpPath := "_dump"
-	ensurePath(t, dumpPath)
-
 	basename, _ := strings.CutPrefix(strcase.ToKebab(t.Name()), "test-")
 	fileExtensions := []string{".xlsx", ".zip"}
+
+	if err := ensurePath(dumpPath); err != nil {
+		t.Fatal(err)
+	}
+
 	writers := make([]io.Writer, 0, len(fileExtensions))
 
 	for _, extension := range fileExtensions {
@@ -42,15 +45,10 @@ func dumpExcelizeFile(t *testing.T, x *excelize.File, opts ...excelize.Options) 
 	}
 }
 
-func ensurePath(t *testing.T, pathname string) {
-	t.Helper()
-
-	var err error
+func ensurePath(pathname string) (err error) {
 	_, err = os.Stat(pathname)
 	if os.IsNotExist(err) {
 		err = os.MkdirAll(pathname, 0o755)
 	}
-	if err != nil {
-		t.Fatal(err)
-	}
+	return err
 }

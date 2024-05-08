@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/xuri/excelize/v2"
+
+	"github.com/m12r/excelize-examples/internal/excelizetest"
 )
 
 func TestSharedFormula(t *testing.T) {
@@ -58,7 +60,7 @@ func TestSharedFormula(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	dumpExcelizeFile(t, x, fileOpts)
+	excelizetest.Dump(t, x, fileOpts)
 }
 
 func TestSharedFormulaWithDuplicateRow(t *testing.T) {
@@ -109,5 +111,5 @@ func TestSharedFormulaWithDuplicateRow(t *testing.T) {
 	if err := x.UpdateLinkedValue(); err != nil {
 		t.Fatal(err)
 	}
-	dumpExcelizeFile(t, x, fileOpts)
+	excelizetest.Dump(t, x, fileOpts)
 }
